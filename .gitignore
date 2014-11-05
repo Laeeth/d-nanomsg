@@ -1,5 +1,5 @@
 dmd.conf
 libnanomsg*
-.so.0
-.so
+*.so.0
+*.so
 *.o
