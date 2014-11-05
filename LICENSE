@@ -1,3 +1,5 @@
+1)  NANOMSG LICENSE
+
     Copyright (c) 2012-2014 250bpm s.r.o.  All rights reserved.
     Copyright (c) 2013 GoPivotal, Inc.  All rights reserved.
 
@@ -19,13 +21,17 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
     IN THE SOFTWARE.
 
-    Ported to Dlang (2014) by Laeeth Isharc.  Caveat emptor.
-    Examples are from:
-        https://github.com/dysinger/nanomsg-examples/blob/master/README.org
+2)  EXAMPLE CODE FROM DYSINGER
+    https://github.com/dysinger/nanomsg-examples/blob/master/README.org
 
-    Please be aware that this was written in a hurry and may not be of outstanding quality.
+    No license is mentioned, but implicitly I believe it is acceptable to port these.  I
+    have checked with the author and will update when i hear back.
 
-    The examples all compile and seem to work correctly.
+3)  BINDINGS THEMSELVES
+    Not an original work since it is the hacked-up set of headers from nanomsg.  But to the
+    extent it is an original work then I release these changes under the same license as applies
+    to the nanomsg main project.  I would be grateful though if you would let me know if you use this
+    work in the financial area (just to satisfy my curiosity).
 
     Please email me laeeth-nospam@nospam-laeeth.com if any questions (but understand that
     on occasion it may be a few weeks before I am able to respond).
