@@ -1,3 +1,4 @@
+dmd.conf
 libnanomsg*
 .so.0
 .so
