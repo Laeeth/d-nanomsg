@@ -1,0 +1,23 @@
+all:	bus.o pair.o pubsub.o reqrep.o survey.o pipeline.o
+		
+
+bus.o:  	bus.d
+		dmd bus.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+
+pair.o: 	pair.d
+		dmd pair.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+
+pubsub.o:	pubsub.d
+		dmd pubsub.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+
+reqrep.o:	reqrep.d
+		dmd reqrep.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+
+survey.o:	survey.d
+		dmd survey.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+
+pipeline.o:	pipeline.d
+		dmd pipeline.d ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+
+clean:		
+		rm -f *.o
