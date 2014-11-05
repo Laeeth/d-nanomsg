@@ -1,24 +1,14 @@
-all:	bus.o pair.o pubsub.o reqrep.o survey.o pipeline.o filesend.o
-		
-bus.o:  	bus.d
-		dmd bus.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+PROGRAMS=bus pair pubsub reqrep survey pipeline filesend
 
-pair.o: 	pair.d
-		dmd pair.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+.PHONY: all clean realclean purge
 
-pubsub.o:	pubsub.d
-		dmd pubsub.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+all: $(PROGRAMS)
 
-reqrep.o:	reqrep.d
-		dmd reqrep.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+$(PROGRAMS): % : %.d
+	dmd $< ../bindings/nano.d -L-lnanomsg
 
-survey.o:	survey.d
-		dmd survey.d  ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
-
-pipeline.o:	pipeline.d
-		dmd pipeline.d ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
-
-filesend.o:	filesend.d
-		dmd filesend.d ../bindings/nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
 clean:		
-		rm -f *.o
+	rm -f *.o
+
+realclean purge: clean
+	rm -f $(PROGRAMS)
