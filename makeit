@@ -1,3 +1,5 @@
 dmd sample.d  nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
 rm -f pipeline
 mv sample pipeline
+dmd reqrep.d  nano.d -L/opt/nanomsg-0.4-beta/.libs/libnanomsg.so
+
