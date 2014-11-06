@@ -11,8 +11,9 @@ I have added one more example filesend.d that demonstrates sending text file
 
 status
 -------
-Please be aware that this was written in a hurry and may not be of outstanding quality.  The tiny examples do
-all compile and seem to work correctly.
+Please be aware that this is something like pre-alpha readiness; it was written in a hurry and may not be of outstanding quality.  The tiny examples do all compile and seem to work correctly.
+
+I have not tested on Windows, and don't plan on maintaining a Windows version for the time being.  Anyone with the inclination and more time is welcome to help.
 
 
 contact
