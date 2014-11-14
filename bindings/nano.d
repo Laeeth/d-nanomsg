@@ -1,3 +1,7 @@
+import std.stdio;
+import std.conv;
+import std.string;
+
 //nn.h
 /*
     Copyright (c) 2012-2014 250bpm s.r.o.  All rights reserved.
@@ -23,8 +27,12 @@
 */
 
 
-/*
+/**
     Ported to Dlang (2014) by Laeeth Isharc.  Caveat emptor.
+
+    Experimental more D-idiomatic interface added:
+        struct nanomsg_t
+
 */
 
 enum NN_H_INCLUDED=1;
@@ -152,9 +160,9 @@ extern (C) int nn_symbol_info (int i, nn_symbol_properties *buf, int buflen);
 extern (C) void nn_term ();
 
 
-long NN_MSG()
+enum
 {
-    return (cast(size_t) -1);
+    NN_MSG=-1
 }
 
 
@@ -283,23 +291,11 @@ extern (C) int nn_device(int s1, int s2);
 enum PAIR_H_INCLUDED=1;
 enum NN_PROTO_PAIR=1;
 
-int NN_PAIR()
-{
-    return (NN_PROTO_PAIR * 16 + 0);
-
-} 
-
+immutable int NN_PAIR=(NN_PROTO_PAIR * 16 + 0);
 enum PIPELINE_H_INCLUDED=1;
 enum NN_PROTO_PIPELINE=5;
-
-int NN_PUSH()
-{
-    return (NN_PROTO_PIPELINE * 16 + 0);  
-} 
-int NN_PULL()
-{
-    return (NN_PROTO_PIPELINE * 16 + 1);
-} 
+immutable int NN_PUSH=(NN_PROTO_PIPELINE * 16 + 0);  
+immutable int NN_PULL=(NN_PROTO_PIPELINE * 16 + 1);
 enum NN_PROTOCOL_INCLUDED=1;
 struct nn_ctx;
 enum NN_PIPE
@@ -394,14 +390,9 @@ struct nn_socktype {
 
 enum NN_PROTO_PUBSUB=2;
 
-int NN_PUB()
-{
-    return (NN_PROTO_PUBSUB * 16 + 0);
-}
-int NN_SUB()
-{
-    return (NN_PROTO_PUBSUB * 16 + 1);
-}
+immutable int NN_PUB=NN_PROTO_PUBSUB * 16 + 0;
+immutable int NN_SUB=NN_PROTO_PUBSUB * 16 + 1;
+
 
 
 enum NN_SUB_SUBSCRIBE =1;
@@ -409,29 +400,15 @@ enum NN_SUB_UNSUBSCRIBE=2;
 enum REQREP_H_INCLUDED=1;
 enum NN_PROTO_REQREP=3;
 
-int NN_REQ()
-{
-    return (NN_PROTO_REQREP * 16 + 0);
-}
-
-int NN_REP()
-{
-    return (NN_PROTO_REQREP * 16 + 1);
-}
+immutable int NN_REQ=NN_PROTO_REQREP * 16 + 0;
+immutable int NN_REP=NN_PROTO_REQREP * 16 + 1;
 
 enum NN_REQ_RESEND_IVL=1;
 enum SURVEY_H_INCLUDED=1;
 enum NN_PROTO_SURVEY=6;
 
-int NN_SURVEYOR()
-{
-    return (NN_PROTO_SURVEY * 16 + 0);
-}
-
-int  NN_RESPONDENT()
-{
-    return (NN_PROTO_SURVEY * 16 + 1);
-}
+immutable int NN_SURVEYOR=(NN_PROTO_SURVEY * 16 + 0);
+immutable int NN_RESPONDENT=(NN_PROTO_SURVEY * 16 + 1);
 
 enum NN_SURVEYOR_DEADLINE=1;
 enum TCP_H_INCLUDED=1;
@@ -537,29 +514,6 @@ struct nn_transport {
     nn_list_item item;
 };
 
-
-/*
-    Copyright (c) 2013 250bpm s.r.o.  All rights reserved.
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"),
-    to deal in the Software without restriction, including without limitation
-    the rights to use, copy, modify, merge, publish, distribute, sublicense,
-    and/or sell copies of the Software, and to permit persons to whom
-    the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included
-    in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-    IN THE SOFTWARE.
-*/
-
 enum NN_FSM_INCLUDED=1;
 
 struct nn_worker;
@@ -622,30 +576,6 @@ void nn_fsm_raiseto(nn_fsm*, nn_fsm* dst, nn_fsm_event* event, int src, int type
 void nn_fsm_feed(nn_fsm*, int src, int type, void* srcptr);
 
 
-
-
-/*
-    Copyright (c) 2012 250bpm s.r.o.  All rights reserved.
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"),
-    to deal in the Software without restriction, including without limitation
-    the rights to use, copy, modify, merge, publish, distribute, sublicense,
-    and/or sell copies of the Software, and to permit persons to whom
-    the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included
-    in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-    IN THE SOFTWARE.
-*/
-
 enum NN_LIST_INCLUDED=1;
 
 struct nn_list_item {
@@ -659,16 +589,11 @@ struct nn_list {
 };
 
 /*  Undefined value for initializing a list item which is not part of a list. */
-auto NN_LIST_NOTINLIST()
-{
-    return (cast(nn_list_item*) -1);
-}
+const nn_list_item* NN_LIST_NOTINLIST=cast(const nn_list_item*)-1;
 
 /*  Use for initializing a list item statically. */
-auto NN_LIST_ITEM_INITIALIZER()
-{
-    return [NN_LIST_NOTINLIST, NN_LIST_NOTINLIST];
-}
+auto NN_LIST_ITEM_INITIALIZER=[NN_LIST_NOTINLIST, NN_LIST_NOTINLIST];
+
 
 /*  Initialise the list. */
 void nn_list_init(nn_list*);
@@ -685,36 +610,12 @@ void nn_list_item_term(nn_list_item*);
 int nn_list_item_isinlist(nn_list_item*);
 
 
-/*
-    Copyright (c) 2012 250bpm s.r.o.  All rights reserved.
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"),
-    to deal in the Software without restriction, including without limitation
-    the rights to use, copy, modify, merge, publish, distribute, sublicense,
-    and/or sell copies of the Software, and to permit persons to whom
-    the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included
-    in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-    IN THE SOFTWARE.
-*/
-
 enum NN_QUEUE_INCLUDED=1;
 
 /*  Undefined value for initialising a queue item which is not
     part of a queue. */
-auto NN_QUEUE_NOTINQUEUE()
-{
-    return (cast(nn_queue_item*) -1);
-}
+const nn_queue_item* NN_QUEUE_NOTINQUEUE=cast(const nn_queue_item*) -1;
+
 
 /+
 /*  Use for initialising a queue item statically. */
@@ -740,3 +641,168 @@ nn_queue_item *nn_queue_pop( nn_queue*);
 void nn_queue_item_init(nn_queue_item*);
 void nn_queue_item_term(nn_queue_item*);
 int nn_queue_item_isinqueue(nn_queue_item*);
+
+
+
+struct nanomsg_t {
+    char *url;
+    int sock=-1;
+    char* buf = cast(char*)0;
+    bool isshutdown=true;
+
+    string surl()()
+    {
+        return to!string(url);
+    }
+    this(int param1=AF_SP,int param2=NN_REP)
+    {
+        sock=nn_socket(param1,param2);
+        if (sock<0)
+            throw new Exception("cannot create nanomsg socket for modes "~ to!string(param1) ~ " "~ to!string(param2));
+        isshutdown=false;
+    }
+
+    void open(string surl, bool bind=true)
+    {
+        if (sock<0)
+            throw new Exception("nanomsg trying to open socket but has not been created yet");
+        if (sock<0)
+            throw new Exception("cannot create nanomsg socket for "~surl);
+        if (bind)
+        {
+            if (nn_bind(sock,toStringz(surl))<0)
+                throw new Exception("nanomsg did not bind to new socket for "~surl);
+        }
+        else{
+            if (nn_connect(sock,toStringz(surl))<0)
+                throw new Exception("nanomsg did not connect to new socket for "~surl);
+        }
+    }
+    ubyte[] recv(int flags)
+    {
+        ubyte[] recvbytes;
+        buf=cast(char*)0;
+        //consider returning as sized array without copy
+        auto numbytes=nn_recv(sock,&buf,NN_MSG,flags);
+        if (numbytes>=0)
+        {
+            recvbytes.length=numbytes+1;
+            foreach(i;0..numbytes)
+            {
+                recvbytes[i]=buf[i];
+            }
+            if (buf)
+            {
+                nn_freemsg(buf);
+                buf=cast(char*)0;
+            }
+            return recvbytes;
+        }
+        else
+        {
+            if (buf)
+            {
+                nn_freemsg(buf);
+                buf=cast(char*)0;
+            }
+            return [];
+            // throw new Exception("nanomsg encountered an error whilst trying to receive a message for "~to!string(url));
+        }
+    }
+
+    string recv_as_string(int param1=NN_MSG)
+    {
+        return to!string(recv(param1));
+    }
+
+    int send(char* mybuf, int numbytes)
+    {
+        return nn_send(sock,mybuf,numbytes,0);
+    }
+
+    int send(ubyte[] mybuf)
+    {
+        return nn_send(sock,cast(char*)mybuf,mybuf.length+1,0);
+    }
+
+    int send(string mybuf)
+    {
+        return nn_send(sock,cast(char*)mybuf,cast(int)mybuf.length+1,0);
+    }
+
+    void setopt(T)(int level, int option, T optval)
+    {
+        nn_setsockopt(sock,level,option,optval,(*optval).size);
+    }
+
+    void getopt(int level, int option, void* optval, size_t *optvallen)
+    {
+        nn_getsockopt(sock,level,option,optval,optvallen);
+    }
+    void close()
+    {
+        nn_close(sock);
+    }
+
+    int sendmsg(const nn_msghdr* msghdr, int flags)
+    {
+        return nn_sendmsg(sock,msghdr,flags);
+    }
+
+    int recvmsg( nn_msghdr* msghdr, int flags)
+    {
+        return nn_recvmsg(sock,msghdr,flags);
+    }
+
+    bool canreceive()
+    {
+        nn_pollfd pfd;
+        pfd.fd=sock;
+        pfd.events=NN_POLLIN;
+        auto res=nn_poll(&pfd,1,2000);
+        if (res==-1)
+            throw new Exception("unable to check socket readiness status - res=" ~ to!string(res) ~ "errno=" ~ to!string(nn_errno()));
+        return (pfd.revents&& NN_POLLIN);
+    }
+
+    bool cansend()
+    {
+        nn_pollfd pfd;
+        pfd.fd=sock;
+        pfd.events=NN_POLLOUT;
+        auto res=nn_poll(&pfd,1,2000);
+        if (res==-1)
+            throw new Exception("unable to check socket readiness status");
+        return(pfd.revents&& NN_POLLOUT);
+    }
+
+    void freemsg()
+    {
+        if (buf)
+            nn_freemsg(buf);
+        buf=cast(char*)0;
+    }
+
+    void shutdown(int param1)
+    {
+        if (buf)
+            nn_freemsg(buf);
+        auto ret=nn_shutdown(sock,param1); // we should check this value and throw exception if need be
+        sock=-1;
+        isshutdown=true;
+    }
+    
+    ~this()
+    {
+        if (!isshutdown)
+            shutdown(0);
+    }
+
+    int errcheck(int retval)
+    {
+        if (retval==-1)
+            throw new Exception("nanomsg error: ");
+        else
+            return retval;
+    }
+}

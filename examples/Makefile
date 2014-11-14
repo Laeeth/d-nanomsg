@@ -4,7 +4,7 @@ PROGRAMS=bus pair pubsub reqrep survey pipeline filesend
 
 all: $(PROGRAMS)
 
-$(PROGRAMS): % : %.d
+$(PROGRAMS): % : %.d ../bindings/nano.d
 	dmd $< ../bindings/nano.d -L-lnanomsg
 
 clean:		

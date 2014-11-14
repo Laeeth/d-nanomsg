@@ -1,3 +1,4 @@
+experiment/*
 dmd.conf
 libnanomsg*
 *.so.0

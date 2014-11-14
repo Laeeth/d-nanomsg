@@ -1,3 +1,7 @@
+import std.stdio;
+import std.conv;
+import std.string;
+
 //nn.h
 /*
     Copyright (c) 2012-2014 250bpm s.r.o.  All rights reserved.
@@ -23,8 +27,12 @@
 */
 
 
-/*
+/**
     Ported to Dlang (2014) by Laeeth Isharc.  Caveat emptor.
+
+    Experimental more D-idiomatic interface added:
+        struct nanomsg_t
+
 */
 
 enum NN_H_INCLUDED=1;
@@ -537,29 +545,6 @@ struct nn_transport {
     nn_list_item item;
 };
 
-
-/*
-    Copyright (c) 2013 250bpm s.r.o.  All rights reserved.
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"),
-    to deal in the Software without restriction, including without limitation
-    the rights to use, copy, modify, merge, publish, distribute, sublicense,
-    and/or sell copies of the Software, and to permit persons to whom
-    the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included
-    in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-    IN THE SOFTWARE.
-*/
-
 enum NN_FSM_INCLUDED=1;
 
 struct nn_worker;
@@ -622,30 +607,6 @@ void nn_fsm_raiseto(nn_fsm*, nn_fsm* dst, nn_fsm_event* event, int src, int type
 void nn_fsm_feed(nn_fsm*, int src, int type, void* srcptr);
 
 
-
-
-/*
-    Copyright (c) 2012 250bpm s.r.o.  All rights reserved.
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"),
-    to deal in the Software without restriction, including without limitation
-    the rights to use, copy, modify, merge, publish, distribute, sublicense,
-    and/or sell copies of the Software, and to permit persons to whom
-    the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included
-    in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-    IN THE SOFTWARE.
-*/
-
 enum NN_LIST_INCLUDED=1;
 
 struct nn_list_item {
@@ -685,28 +646,6 @@ void nn_list_item_term(nn_list_item*);
 int nn_list_item_isinlist(nn_list_item*);
 
 
-/*
-    Copyright (c) 2012 250bpm s.r.o.  All rights reserved.
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"),
-    to deal in the Software without restriction, including without limitation
-    the rights to use, copy, modify, merge, publish, distribute, sublicense,
-    and/or sell copies of the Software, and to permit persons to whom
-    the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included
-    in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-    IN THE SOFTWARE.
-*/
-
 enum NN_QUEUE_INCLUDED=1;
 
 /*  Undefined value for initialising a queue item which is not
@@ -740,3 +679,125 @@ nn_queue_item *nn_queue_pop( nn_queue*);
 void nn_queue_item_init(nn_queue_item*);
 void nn_queue_item_term(nn_queue_item*);
 int nn_queue_item_isinqueue(nn_queue_item*);
+
+
+
+struct nanomsg_t {
+    char *url;
+    int sock=-1;
+    char* buf = cast(char*)0;
+    bool isshutdown=true;
+
+    string surl()()
+    {
+        return to!string(url);
+    }
+    this(int param1=AF_SP,int param2=NN_REP)
+    {
+        sock=nn_socket(param1,param2);
+        if (sock<0)
+            throw new Exception("cannot create nanomsg socket for modes "~ to!string(param1) ~ " "~ to!string(param2));
+        isshutdown=false;
+    }
+
+    void open(string surl, bool bind=true)
+    {
+        if (sock<0)
+            throw new Exception("nanomsg trying to open socket but has not been created yet");
+        if (sock<0)
+            throw new Exception("cannot create nanomsg socket for "~surl);
+        if (bind)
+        {
+            if (nn_bind(sock,toStringz(surl))<0)
+                throw new Exception("nanomsg did not bind to new socket for "~surl);
+        }
+        else{
+            if (nn_connect(sock,toStringz(surl))<0)
+                throw new Exception("nanomsg did not connect to new socket for "~surl);
+        }
+    }
+    ubyte[] recv(long param1=NN_MSG)
+    {
+        ubyte[] recvbytes;
+        //consider returning as sized array without copy
+        auto numbytes=nn_recv(sock,&buf,param1,0);
+        writefln("%s bytes received",numbytes);
+        if (numbytes>=0)
+        {
+            recvbytes.length=numbytes+1;
+            foreach(i;0..numbytes)
+            {
+                recvbytes[i]=buf[i];
+            }
+            return recvbytes;
+        }
+        else
+            throw new Exception("nanomsg encountered an error whilst trying to receive a message for "~surl);
+    }
+
+    string recv_as_string(long param1=NN_MSG)
+    {
+        return to!string(recv(param1));
+    }
+
+    int send(char* buf, int numbytes)
+    {
+        return nn_send(sock,buf,numbytes,0);
+    }
+
+    int send(ubyte[] buf)
+    {
+        return nn_send(sock,cast(char*)buf,buf.length+1,0);
+    }
+
+    int send(string buf)
+    {
+        return nn_send(sock,cast(char*)buf,cast(int)buf.length+1,0);
+    }
+
+    void setopt(T)(int level, int option, T optval)
+    {
+        nn_setsockopt(sock,level,option,optval,(*optval).size);
+    }
+
+    void getopt(int level, int option, void* optval, size_t *optvallen)
+    {
+        nn_getsockopt(sock,level,option,optval,optvallen);
+    }
+    void close()
+    {
+        nn_close(sock);
+    }
+
+    int sendmsg(const nn_msghdr* msghdr, int flags)
+    {
+        return nn_sendmsg(sock,msghdr,flags);
+    }
+
+    int recvmsg( nn_msghdr* msghdr, int flags)
+    {
+        return nn_recvmsg(sock,msghdr,flags);
+    }
+
+    void freemsg()
+    {
+        if (buf)
+            nn_freemsg(buf);
+        buf=cast(char*)0;
+    }
+
+    void shutdown(int param1)
+    {
+        if (buf)
+            nn_freemsg(buf);
+        auto ret=nn_shutdown(sock,param1); // we should check this value and throw exception if need be
+        sock=-1;
+        isshutdown=true;
+    }
+    
+    ~this()
+    {
+        if (!isshutdown)
+            shutdown(0);
+    }
+}
