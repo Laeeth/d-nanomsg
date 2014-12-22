@@ -665,8 +665,6 @@ struct nanomsg_t {
     void open(string surl, bool bind=true)
     {
         if (sock<0)
-            throw new Exception("nanomsg trying to open socket but has not been created yet");
-        if (sock<0)
             throw new Exception("cannot create nanomsg socket for "~surl);
         if (bind)
         {
@@ -705,8 +703,7 @@ struct nanomsg_t {
                 nn_freemsg(buf);
                 buf=cast(char*)0;
             }
-            return [];
-            // throw new Exception("nanomsg encountered an error whilst trying to receive a message for "~to!string(url));
+            throw new Exception("nanomsg encountered an error whilst trying to receive a message for "~to!string(url) ~ " error:"~ to!string(nn_strerror(nn_errno())));
         }
     }
 
@@ -762,7 +759,7 @@ struct nanomsg_t {
         auto res=nn_poll(&pfd,1,2000);
         if (res==-1)
             throw new Exception("unable to check socket readiness status - res=" ~ to!string(res) ~ "errno=" ~ to!string(nn_errno()));
-        return (pfd.revents&& NN_POLLIN);
+        return (pfd.revents&& NN_POLLIN)<>0;
     }
 
     bool cansend()
@@ -773,7 +770,7 @@ struct nanomsg_t {
         auto res=nn_poll(&pfd,1,2000);
         if (res==-1)
             throw new Exception("unable to check socket readiness status");
-        return(pfd.revents&& NN_POLLOUT);
+        return(pfd.revents&& NN_POLLOUT)<>0;
     }
 
     void freemsg()
