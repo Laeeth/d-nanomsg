@@ -2,6 +2,7 @@ import std.stdio;
 import std.datetime;
 import core.thread;
 import nano;
+import std.string:toStringz;
 
 enum SERVER ="server";
 enum CLIENT ="client";
@@ -13,7 +14,7 @@ string date ()
 
 int server (string surl)
 {
-  auto url=cast(char*)surl;
+  auto url=surl.toStringz;
   int sock = nn_socket (AF_SP, NN_PUB);
   assert (sock >= 0);
   assert (nn_bind (sock, url) >= 0);
@@ -22,7 +23,7 @@ int server (string surl)
       auto d = date();
       int sz_d = cast(int)d.length+1;
       writefln("SERVER: PUBLISHING DATE %s", d);
-      int bytes = nn_send(sock, cast(char*)d, sz_d, 0);
+      int bytes = nn_send(sock, d.toStringz, sz_d, 0);
       assert (bytes == sz_d);
       Thread.sleep( dur!("seconds")( 1 ) );
   }
@@ -31,12 +32,12 @@ int server (string surl)
 
 int client (string surl, string sname)
 {
-  auto url=cast(char*)surl;
-  auto name=cast(char*)sname;
+  auto url=surl.toStringz;
+  auto name=sname.toStringz;
   int sock = nn_socket (AF_SP, NN_SUB);
   assert (sock >= 0);
   // TODO learn more about publishing/subscribe keys
-  assert (nn_setsockopt(sock, NN_SUB, NN_SUB_SUBSCRIBE, cast(char*)"", 0) >= 0);
+  assert (nn_setsockopt(sock, NN_SUB, NN_SUB_SUBSCRIBE, "".toStringz, 0) >= 0);
   assert (nn_connect (sock, url) >= 0);
   while (1)
     {

@@ -3,6 +3,7 @@ import std.datetime;
 import std.conv;
 import core.thread;
 import nano;
+import std.string:toStringz;
 
 enum SERVER ="server";
 enum CLIENT ="client";
@@ -15,14 +16,14 @@ string date ()
 
 int server (string surl)
 {
-  auto url=cast(char*)surl;
+  auto url=surl.toStringz;
   int sock = nn_socket (AF_SP, NN_SURVEYOR);
   assert (sock >= 0);
   assert (nn_bind (sock, url) >= 0);
   Thread.sleep( dur!("seconds")( 1 ) ); // wait for connections
   int sz_d = cast(int)DATE.length+1;
   writefln("SERVER: SENDING DATE SURVEY REQUEST");
-  int bytes = nn_send (sock, cast(char*)DATE, sz_d, 0);
+  int bytes = nn_send (sock, DATE.toStringz, sz_d, 0);
   assert (bytes == sz_d);
   while (1)
     {
@@ -40,8 +41,8 @@ int server (string surl)
 
 int client(string surl,string sname)
 {
-  auto url=cast(char*)surl;
-  auto name=cast(char*)sname;
+  auto url=surl.toStringz;
+  auto name=sname.toStringz;
   int sock = nn_socket (AF_SP, NN_RESPONDENT);
   assert (sock >= 0);
   assert (nn_connect (sock, url) >= 0);
@@ -56,7 +57,7 @@ int client(string surl,string sname)
           string d = date();
           int sz_d = cast(int)d.length+1;
           writefln("CLIENT (%s): SENDING DATE SURVEY RESPONSE", to!string(name));
-          int nubytes = nn_send (sock, cast(char*)d, sz_d, 0);
+          int nubytes = nn_send (sock, d.toStringz, sz_d, 0);
           assert (nubytes == sz_d);
         }
     }

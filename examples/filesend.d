@@ -2,6 +2,7 @@ import nano;
 import std.stdio;
 import std.conv;
 import std.file;
+import std.string:toStringz;
 
 enum NODE0 ="node0";
 enum NODE1 ="node1";
@@ -25,13 +26,13 @@ int node0 (string xurl)
 
 int sendfile(string url, string filename)
 {
-  auto msg=read(filename);
+  auto msg=cast(char[])read(filename);
   int sz_msg = cast(int)msg.length + 1; // '\0' too
   int sock = nn_socket (AF_SP, NN_PUSH);
   assert(sock >= 0);
-  assert(nn_connect(sock, cast(char*)url) >= 0);
-  writefln("NODE1: SENDING \"%s\"", msg);
-  int bytes = nn_send(sock, cast(void*)msg, sz_msg, 0);
+  assert(nn_connect(sock, url.toStringz) >= 0);
+  writefln("NODE1: SENDING \"%s\"", msg.to!string);
+  int bytes = nn_send(sock, msg.toStringz, sz_msg, 0);
   assert(bytes == sz_msg);
   return nn_shutdown(sock, 0);
 

@@ -1,6 +1,7 @@
 import nano;
 import std.stdio;
 import std.conv;
+import std.string:toStringz;
 
 enum NODE0 ="node0";
 enum NODE1 ="node1";
@@ -8,7 +9,7 @@ enum NODE1 ="node1";
 int node0 (string xurl)
 {
   int sock = nn_socket (AF_SP, NN_PULL);
-  auto url=cast(char*)xurl;
+  auto url=xurl.toStringz;
   assert(sock >= 0);
   assert(nn_bind (sock, url) >= 0);
   while (1)
@@ -27,9 +28,9 @@ int node1 (string url, string msg)
   int sz_msg = cast(int)msg.length + 1; // '\0' too
   int sock = nn_socket (AF_SP, NN_PUSH);
   assert(sock >= 0);
-  assert(nn_connect(sock, cast(char*)url) >= 0);
+  assert(nn_connect(sock, url.toStringz) >= 0);
   writefln("NODE1: SENDING \"%s\"", msg);
-  int bytes = nn_send(sock, cast(void*)msg, sz_msg, 0);
+  int bytes = nn_send(sock, msg.toStringz, sz_msg, 0);
   assert(bytes == sz_msg);
   return nn_shutdown(sock, 0);
 }

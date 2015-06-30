@@ -4,6 +4,9 @@
 	"authors": ["Laeeth Isharc"],
 	"homepage": "https://github.com/Laeeth/d-nanomsg",
 	"license": "Boost-1.0",
+	"targetType":"library",
+	"sourceFiles":["bindings/nano.d"],
+	"libs": ["nanomsg"],
 	"dependencies": {
 	}
 }
