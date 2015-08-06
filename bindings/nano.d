@@ -31,7 +31,7 @@ import std.string;
     Ported to Dlang (2014) by Laeeth Isharc.  Caveat emptor.
 
     Experimental more D-idiomatic interface added:
-        struct nanomsg_t
+        struct NanoMessage
 
 */
 
@@ -686,7 +686,8 @@ extern(C)
 }
 
 
-struct nanomsg_t {
+struct NanoMessage
+{
     char *url;
     int sock=-1;
     char* buf = cast(char*)0;
@@ -718,7 +719,7 @@ struct nanomsg_t {
                 throw new Exception("nanomsg did not connect to new socket for "~surl);
         }
     }
-    ubyte[] recv(int flags)
+    ubyte[] receive(int flags)
     {
         ubyte[] recvbytes;
         buf=cast(char*)0;
@@ -749,9 +750,9 @@ struct nanomsg_t {
         }
     }
 
-    string recv_as_string(int param1=NN_MSG)
+    string receiveAsString(int param1=NN_MSG)
     {
-        return to!string(recv(param1));
+        return to!string(receive(param1));
     }
 
     int send(char* mybuf, int numbytes)
@@ -761,20 +762,20 @@ struct nanomsg_t {
 
     int send(ubyte[] mybuf)
     {
-        return nn_send(sock,cast(char*)mybuf,mybuf.length+1,0);
+        return nn_send(sock,cast(char*)mybuf.ptr,mybuf.length+1,0);
     }
 
     int send(string mybuf)
     {
-        return nn_send(sock,cast(char*)mybuf,cast(int)mybuf.length+1,0);
+        return nn_send(sock,mybuf.ptr,cast(int)mybuf.length+1,0);
     }
 
-    void setopt(T)(int level, int option, T optval)
+    void setOpt(T)(int level, int option, T optval)
     {
         nn_setsockopt(sock,level,option,optval,(*optval).size);
     }
 
-    void getopt(int level, int option, void* optval, size_t *optvallen)
+    void getOpt(int level, int option, void* optval, size_t *optvallen)
     {
         nn_getsockopt(sock,level,option,optval,optvallen);
     }
@@ -783,17 +784,17 @@ struct nanomsg_t {
         nn_close(sock);
     }
 
-    int sendmsg(const nn_msghdr* msghdr, int flags)
+    int sendMessage(const nn_msghdr* msghdr, int flags)
     {
         return nn_sendmsg(sock,msghdr,flags);
     }
 
-    int recvmsg( nn_msghdr* msghdr, int flags)
+    int receiveMessage( nn_msghdr* msghdr, int flags)
     {
         return nn_recvmsg(sock,msghdr,flags);
     }
 
-    bool canreceive()
+    bool canReceive()
     {
         nn_pollfd pfd;
         pfd.fd=sock;
@@ -804,7 +805,7 @@ struct nanomsg_t {
         return (pfd.revents&& NN_POLLIN)!=0;
     }
 
-    bool cansend()
+    bool canSend()
     {
         nn_pollfd pfd;
         pfd.fd=sock;
@@ -815,7 +816,7 @@ struct nanomsg_t {
         return(pfd.revents&& NN_POLLOUT)!=0;
     }
 
-    void freemsg()
+    void freeMessage()
     {
         if (buf)
             nn_freemsg(buf);
