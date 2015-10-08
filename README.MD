@@ -7,11 +7,11 @@ d-nanomsg
 * Ported to Dlang (2014) by Laeeth Isharc.  Caveat emptor.
 
 * Examples are from [dysinger](https://github.com/dysinger/nanomsg-examples/blob/master/README.org)
-I have added one more example filesend.d that demonstrates sending text file
+    - I have added one more example filesend.d that demonstrates sending a text file
 
 status
 -------
-Please be aware that this is something like pre-alpha readiness; it was written in a hurry and may not be of outstanding quality.  The tiny examples do all compile and seem to work correctly.
+Please be aware that this is something like pre-alpha readiness; it was written in a hurry and may not be of outstanding quality.  The tiny examples do all compile and seem to work correctly and I use some of the patterns in production.
 
 I have not tested on Windows, and don't plan on maintaining a Windows version for the time being.  Anyone with the inclination and more time is welcome to help.
 
