@@ -1,6 +1,6 @@
 d-nanomsg
 =========
-* experimental d-lang bindings for nano msg framework (a successor to ZeroMQ written in C)
+* experimental d-lang bindings for nano msg framework (a successor to ZeroMQ written in C) (nanomsg-0.6-beta)
 
 * see [dlang.org](dlang.org) for more about the D Programming Language
 
