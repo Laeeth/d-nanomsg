@@ -1,3 +1,4 @@
+module kaleidic.nanomsg.nano;
 import std.stdio;
 import std.conv;
 import std.string;
