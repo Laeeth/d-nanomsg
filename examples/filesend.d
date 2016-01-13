@@ -1,4 +1,4 @@
-import nano;
+import kaleidic.nanomsg.nano;
 import std.stdio;
 import std.conv;
 import std.file;
