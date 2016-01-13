@@ -3,7 +3,6 @@ import core.thread;
 import std.conv;
 import kaleidic.nanomsg.nano;
 
-
 enum NODE0 ="node0";
 enum NODE1 ="node1";
 
@@ -28,12 +27,11 @@ int recv_name(int sock, string name)
 
 void send_recv(int sock, string name)
 {
-  int to = 100_000_000;
+  int to = 100;
   assert (nn_setsockopt (sock, NN_SOL_SOCKET, NN.RCVTIMEO, &to, to.sizeof) >= 0);
   while(1)
     {
       recv_name(sock, name);
-      writeln ("##1");	
       Thread.sleep( dur!("seconds")( 1 ) );
       send_name(sock, name);
     }
