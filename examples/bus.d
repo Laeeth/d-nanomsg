@@ -2,7 +2,7 @@ import std.stdio;
 import std.datetime;
 import std.conv;
 import core.thread;
-import nano;
+import kaleidic.nanomsg.nano;
 import std.string:toStringz;
 
 

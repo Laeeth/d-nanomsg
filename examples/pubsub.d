@@ -1,7 +1,7 @@
 import std.stdio;
 import std.datetime;
 import core.thread;
-import nano;
+import kaleidic.nanomsg.nano;
 import std.string:toStringz;
 
 enum SERVER ="server";

@@ -2,7 +2,7 @@ import std.stdio;
 import std.conv;
 import std.datetime;
 import core.thread;
-import nano;
+import kaleidic.nanomsg.nano;
 
 string date ()
 {
