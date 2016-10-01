@@ -697,7 +697,8 @@ struct NanoMessage
     {
         return to!string(url);
     }
-    this(int param1=AF_SP,int param2=NN_REP)
+    // for example AF_SP, NN_REP
+    this(int param1,int param2)
     {
         sock=nn_socket(param1,param2);
         if (sock<0)

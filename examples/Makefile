@@ -9,6 +9,4 @@ $(PROGRAMS): % : %.d ../bindings/nano.d
 
 clean:		
 	rm -f *.o
-
-realclean purge: clean
 	rm -f $(PROGRAMS)
