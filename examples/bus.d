@@ -1,8 +1,8 @@
+import kaleidic.nanomsg.bindings;
 import std.stdio;
 import std.datetime;
 import std.conv;
 import core.thread;
-import nano;
 import std.string:toStringz;
 
 

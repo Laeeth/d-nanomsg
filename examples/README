@@ -1,3 +1,0 @@
-make cleanall to remove executables
-then make clean
-and run ./test... for the tests

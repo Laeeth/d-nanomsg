@@ -1,7 +1,7 @@
+import kaleidic.nanomsg.bindings;
 import std.stdio;
 import core.thread;
 import std.conv;
-import nano;
 
 enum NODE0 ="node0";
 enum NODE1 ="node1";

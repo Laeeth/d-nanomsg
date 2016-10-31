@@ -2,7 +2,7 @@ import std.stdio;
 import std.datetime;
 import std.conv;
 import core.thread;
-import nano;
+import kaleidic.nanomsg.bindings;
 import std.string:toStringz;
 
 enum SERVER ="server";

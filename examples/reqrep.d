@@ -2,7 +2,7 @@ import std.stdio;
 import std.conv;
 import std.datetime;
 import core.thread;
-import nano;
+import kaleidic.nanomsg.bindings;
 
 string date ()
 {
@@ -58,7 +58,7 @@ int node1 (string url)
   return nn_shutdown (sock, 0);
 }
 
- 
+
 int main(string[] argv)
 {
   if (argv.length>1)
@@ -70,4 +70,3 @@ int main(string[] argv)
    writefln("Usage: reqrep %s|%s <URL> <ARG> ...'",NODE0, NODE1);
    return 1;
 }
-

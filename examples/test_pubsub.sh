@@ -4,4 +4,3 @@
 ./pubsub client ipc:///tmp/pubsub.ipc client2 & client2=$!
 sleep 5
 kill $server $client0 $client1 $client2
-pkill pubsub
