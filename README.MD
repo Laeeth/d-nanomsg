@@ -1,19 +1,17 @@
 d-nanomsg
 =========
-* experimental d-lang bindings for nano msg framework (a successor to ZeroMQ written in C) (nanomsg-0.6-beta)
+* experimental dlang bindings for nano msg framework (a successor to ZeroMQ written in C) (nanomsg-1.0)
 
 * see [dlang.org](dlang.org) for more about the D Programming Language
 
-* Ported to Dlang (2014) by Laeeth Isharc.  Caveat emptor.
+* Ported to Dlang (2014,2015,2016) by Laeeth Isharc.  Caveat emptor.
 
 * Examples are from [dysinger](https://github.com/dysinger/nanomsg-examples/blob/master/README.org)
     - I have added one more example: filesend.d that demonstrates sending a text file
 
 status
 -------
-Please be aware that this is something like pre-alpha readiness; it was written in a hurry and may not be of outstanding quality.  The tiny examples do all compile and seem to work correctly and I use some of the patterns in production.
-
-I have not tested on Windows, and don't plan on maintaining a Windows version for the time being.  Anyone with the inclination and more time is welcome to help.
+Please be aware that this is of beta quality, and that I have not tested on Windows.
 
 
 contact
