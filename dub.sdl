@@ -1,0 +1,21 @@
+name "d-nanomsg"
+version "0.1.2"
+description "Nanomsg - ZeroMQ successor - bindings/wrappers for the D Programming Language."
+homepage "https://github.com/Laeeth/d-nanomsg"
+authors "Laeeth Isharc"
+license "Boost-1.0"
+targetType "library"
+libs "nanomsg"
+sourceFiles "bindings/kaleidic/nanomsg/nano.d"
+sourcePaths "source/"
+importPaths "bindings/"
+configuration "sourceLibrary" {
+	targetType "sourceLibrary"
+}
+configuration "library" {
+	targetType "library"
+}
+configuration "dynamicLibrary" {
+	targetType "dynamicLibrary"
+	dflags "-fPIC" "-defaultlib=libphobos2.so"
+}
