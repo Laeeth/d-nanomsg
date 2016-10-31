@@ -6,9 +6,8 @@ authors "Laeeth Isharc"
 license "Boost-1.0"
 targetType "library"
 libs "nanomsg"
-sourceFiles "bindings/kaleidic/nanomsg/nano.d"
 sourcePaths "source/"
-importPaths "bindings/"
+importPaths "source/"
 configuration "sourceLibrary" {
 	targetType "sourceLibrary"
 }
