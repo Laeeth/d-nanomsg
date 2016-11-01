@@ -40,14 +40,12 @@ struct NanoMessage
 
     @disable this(this);
 
-    static NanoMessage create(int domain, int protocol)
+    this(int domain, int protocol)
     {
         import std.exception:enforce;
-        NanoMessage self;
-        self.sock = nn_socket(domain, protocol);
-        enforce(self.sock >= 0,"cannot create nanomsg socket for modes "~ to!string(domain) ~ " "~ to!string(protocol)~"\n"~errorMessage()~"\n");
-        self.isShutDown = false;
-        return self;
+        this.sock = nn_socket(domain, protocol);
+        enforce(this.sock >= 0,"cannot create nanomsg socket for modes "~ to!string(domain) ~ " "~ to!string(protocol)~"\n"~errorMessage()~"\n");
+        this.isShutDown = false;
     }
 
     ~this()
